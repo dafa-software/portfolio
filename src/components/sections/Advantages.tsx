@@ -1,6 +1,7 @@
 import { advantages } from '../../data/advantages'
 import { useLanguage } from '../../i18n/useLanguage'
 import { Icon } from '../Icon'
+import { Reveal } from '../Reveal'
 import { SectionHeading } from '../SectionHeading'
 
 export function Advantages() {
@@ -16,21 +17,20 @@ export function Advantages() {
         />
 
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {advantages.map((advantage) => (
-            <article
-              key={advantage.id}
-              className="rounded-2xl border border-border bg-background p-6"
-            >
-              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <Icon name={advantage.icon} className="h-5 w-5" />
-              </span>
-              <h3 className="mt-5 text-lg font-semibold text-foreground">
-                {advantage.title[lang]}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                {advantage.description[lang]}
-              </p>
-            </article>
+          {advantages.map((advantage, index) => (
+            <Reveal key={advantage.id} delay={(index % 3) * 80}>
+              <article className="h-full rounded-2xl border border-border bg-background p-6">
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <Icon name={advantage.icon} className="h-5 w-5" />
+                </span>
+                <h3 className="mt-5 text-lg font-semibold text-foreground">
+                  {advantage.title[lang]}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {advantage.description[lang]}
+                </p>
+              </article>
+            </Reveal>
           ))}
         </div>
       </div>

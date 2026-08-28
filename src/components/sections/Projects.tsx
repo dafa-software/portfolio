@@ -3,6 +3,7 @@ import type { ProjectCategory, ProjectLocale } from '../../data/projects'
 import { projects } from '../../data/projects'
 import type { TranslationKey } from '../../i18n/translations'
 import { useLanguage } from '../../i18n/useLanguage'
+import { Reveal } from '../Reveal'
 import { SectionHeading } from '../SectionHeading'
 import { ProjectDetail } from './ProjectDetail'
 
@@ -72,57 +73,58 @@ export function Projects() {
 
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((project, index) => (
-            <button
-              key={project.id}
-              type="button"
-              onClick={() => setSelected(project.id)}
-              aria-label={`${t('projects.details')}: ${project.name}`}
-              className="group flex flex-col overflow-hidden text-left rounded-2xl border border-border bg-surface transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
-            >
-              <span
-                aria-hidden="true"
-                className={`flex h-32 items-center justify-center bg-gradient-to-br ${
-                  coverGradients[index % coverGradients.length]
-                }`}
+            <Reveal key={project.id} delay={(index % 3) * 80}>
+              <button
+                type="button"
+                onClick={() => setSelected(project.id)}
+                aria-label={`${t('projects.details')}: ${project.name}`}
+                className="group flex h-full w-full flex-col overflow-hidden text-left rounded-2xl border border-border bg-surface transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
               >
-                <span className="text-4xl font-bold text-primary-foreground/90">
-                  {project.name
-                    .split(' ')
-                    .map((part) => part.charAt(0))
-                    .join('')
-                    .slice(0, 2)
-                    .toUpperCase()}
+                <span
+                  aria-hidden="true"
+                  className={`flex h-32 items-center justify-center bg-gradient-to-br ${
+                    coverGradients[index % coverGradients.length]
+                  }`}
+                >
+                  <span className="text-4xl font-bold text-primary-foreground/90">
+                    {project.name
+                      .split(' ')
+                      .map((part) => part.charAt(0))
+                      .join('')
+                      .slice(0, 2)
+                      .toUpperCase()}
+                  </span>
                 </span>
-              </span>
 
-              <span className="flex flex-1 flex-col p-5">
-                <span className="flex items-center justify-between gap-2">
-                  <span className="text-base font-semibold text-foreground">
-                    {project.name}
-                  </span>
-                  <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-semibold text-primary">
-                    {t(
-                      project.category === 'institutional'
-                        ? 'projects.category.institutional'
-                        : 'projects.category.platform'
-                    )}
-                  </span>
-                </span>
-                <span className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">
-                  {project.summary[lang]}
-                </span>
-                <span className="mt-4 flex flex-wrap gap-1.5">
-                  {project.techStack.slice(0, 3).map((tech) => (
-                    <span
-                      key={tech}
-                      className="rounded border border-border bg-background px-2 py-0.5 text-[11px] font-medium text-muted-foreground"
-                    >
-                      {tech}
+                <span className="flex flex-1 flex-col p-5">
+                  <span className="flex items-center justify-between gap-2">
+                    <span className="text-base font-semibold text-foreground">
+                      {project.name}
                     </span>
-                  ))}
+                    <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-semibold text-primary">
+                      {t(
+                        project.category === 'institutional'
+                          ? 'projects.category.institutional'
+                          : 'projects.category.platform'
+                      )}
+                    </span>
+                  </span>
+                  <span className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">
+                    {project.summary[lang]}
+                  </span>
+                  <span className="mt-4 flex flex-wrap gap-1.5">
+                    {project.techStack.slice(0, 3).map((tech) => (
+                      <span
+                        key={tech}
+                        className="rounded border border-border bg-background px-2 py-0.5 text-[11px] font-medium text-muted-foreground"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </span>
                 </span>
-              </span>
-            </button>
+              </button>
+            </Reveal>
           ))}
         </div>
       </div>
