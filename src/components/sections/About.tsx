@@ -1,7 +1,7 @@
 import { site } from '../../data/site'
 import { useLanguage } from '../../i18n/useLanguage'
 import { Reveal } from '../Reveal'
-import { SectionHeading } from '../SectionHeading'
+import { SectionHeader } from '../SectionHeader'
 
 const stats = [
   { key: 'about.stats.experience', value: '12+' },
@@ -13,41 +13,64 @@ export function About() {
   const { t } = useLanguage()
 
   return (
-    <section id="about" className="border-b border-border">
+    <section id="about" className="border-b border-border bg-background">
       <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
-        <SectionHeading eyebrow={t('about.eyebrow')} title={t('about.title')} />
+        <SectionHeader
+          index="01"
+          overline={t('about.eyebrow')}
+          title={t('about.title')}
+        />
 
         <Reveal>
-          <div className="mt-14 grid items-center gap-12 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
-            <div className="mx-auto w-56 md:w-full">
-              <div className="flex aspect-square w-full flex-col items-center justify-center rounded-3xl border border-border bg-surface text-foreground">
-                <span className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary p-1.5">
+          <div className="mt-14 grid gap-12 lg:grid-cols-12">
+            <div className="lg:col-span-4">
+              <div className="border border-border bg-surface">
+                <div className="flex aspect-square items-center justify-center border-b border-border bg-primary p-10">
                   <img src="/logo.png" alt="" className="h-full w-full object-contain" />
-                </span>
-                <span className="mt-4 text-center text-sm font-semibold">
-                  {site.name}
-                </span>
-                <span className="mt-1 text-xs text-muted-foreground">{site.founder}</span>
+                </div>
+                <dl className="grid grid-cols-2 divide-x divide-border">
+                  <div className="px-5 py-4">
+                    <dt className="overline text-muted-foreground">
+                      {t('hero.meta.studio')}
+                    </dt>
+                    <dd className="mt-1 text-sm font-semibold text-foreground">
+                      {site.name}
+                    </dd>
+                  </div>
+                  <div className="px-5 py-4">
+                    <dt className="overline text-muted-foreground">
+                      {t('hero.meta.founder')}
+                    </dt>
+                    <dd className="mt-1 text-sm font-semibold text-foreground">
+                      {site.founder}
+                    </dd>
+                  </div>
+                </dl>
               </div>
             </div>
 
-            <div>
-              <p className="text-base leading-relaxed text-muted-foreground md:text-lg">
+            <div className="lg:col-span-8">
+              <p className="text-lg leading-relaxed text-foreground md:text-2xl">
                 {t('about.bio.1')}
               </p>
               <p className="mt-4 text-base leading-relaxed text-muted-foreground md:text-lg">
                 {t('about.bio.2')}
               </p>
 
-              <dl className="mt-10 grid grid-cols-3 gap-6">
-                {stats.map((stat) => (
-                  <div key={stat.key}>
-                    <dt className="text-xs font-medium text-muted-foreground">
-                      {t(stat.key)}
-                    </dt>
-                    <dd className="mt-1 text-3xl font-bold tracking-tight text-primary">
+              <dl className="mt-12 grid grid-cols-3 border border-border">
+                {stats.map((stat, index) => (
+                  <div
+                    key={stat.key}
+                    className={
+                      index > 0 ? 'border-l border-border px-6 py-6' : 'px-6 py-6'
+                    }
+                  >
+                    <dd className="font-display text-4xl font-bold tracking-tight text-primary md:text-5xl">
                       {stat.value}
                     </dd>
+                    <dt className="mt-2 text-xs font-medium text-muted-foreground">
+                      {t(stat.key)}
+                    </dt>
                   </div>
                 ))}
               </dl>

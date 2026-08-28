@@ -7,7 +7,7 @@ Bilingual (PT-BR / EN) portfolio for **DAFA Software** — the web development s
 - **React 19 + TypeScript** with Vite 8
 - **Tailwind CSS v4** (`@tailwindcss/vite`) with semantic design tokens that switch for dark/light via a `.dark` class
 - **Custom i18n** — React Context, no library (`src/i18n/`)
-- **LocalFonts** — Inter Variable (body) + Space Grotesk Variable (display) via `@fontsource-variable`
+- **LocalFonts** — Space Grotesk Variable (display) + Manrope Variable (body) + JetBrains Mono Variable (labels/numbers) via `@fontsource-variable`
 - **Lint / Format** — Oxlint + Prettier
 
 ## Scripts
@@ -23,10 +23,11 @@ npm run preview   # preview the production build
 
 ## Features
 
-- Sections: Hero, About (Quem somos), Services, Advantages, Projects (filterable grid + detail modal with media carousel), Contact
+- Sections: Hero, About (Quem somos), Services, Advantages, Projects (filterable work list + detail modal with media carousel), Contact
 - Language toggle PT-BR ↔ EN (persisted in `localStorage`)
 - Theme toggle dark ↔ light (defaults to system preference, persisted, no-FOUC inline script)
-- Scroll-reveal animations honoring `prefers-reduced-motion`
+- Editorial design system: mono overlines/index numbers, numbered section headers, hairline dividers
+- Scroll-reveal animations (below fold only, honoring `prefers-reduced-motion`)
 - Accessible dialogs, keyboard navigation, focus-visible rings
 - Contact form opens the visitor's email app via `mailto:` (no backend)
 

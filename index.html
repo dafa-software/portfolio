@@ -9,6 +9,7 @@
       name="description"
       content="DAFA Software — estúdio de desenvolvimento web fundado por Diego Aguiar. Sites, plataformas e produtos digitais modernos, rápidos e acessíveis."
     />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
     <link rel="canonical" href="https://dafa.dev/" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://dafa.dev/" />
@@ -47,18 +48,50 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "Person",
-        "name": "Diego Aguiar",
-        "jobTitle": "Founder & CTO, DAFA Software",
-        "worksFor": { "@type": "Organization", "name": "DAFA Software" },
+        "@type": "Organization",
+        "name": "DAFA Software",
         "url": "https://dafa.dev/",
         "email": "mailto:diegoa.aguiar.dev@gmail.com",
+        "founder": {
+          "@type": "Person",
+          "name": "Diego Aguiar"
+        },
         "sameAs": []
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "DAFA Software",
+        "url": "https://dafa.dev/",
+        "inLanguage": ["pt-BR", "en"]
       }
     </script>
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <div
+        style="
+          max-width: 720px;
+          margin: 48px auto;
+          padding: 0 24px;
+          font-family: system-ui, sans-serif;
+          line-height: 1.6;
+        "
+      >
+        <h1>DAFA Software — Desenvolvimento web e produtos digitais</h1>
+        <p>
+          Estúdio de desenvolvimento web fundado por Diego Aguiar. Criamos sites,
+          plataformas e experiências digitais modernas, rápidas e acessíveis.
+        </p>
+        <p>E-mail: diegoa.aguiar.dev@gmail.com</p>
+        <p>
+          <a href="/robots.txt">robots.txt</a> · <a href="/sitemap.xml">sitemap.xml</a>
+        </p>
+      </div>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

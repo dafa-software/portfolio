@@ -12,6 +12,11 @@ export const translations = {
       'Estúdio de desenvolvimento web que constrói sites, plataformas e experiências digitais modernas, rápidas e acessíveis — do conceito à produção.',
     'hero.cta.primary': 'Ver projetos',
     'hero.cta.secondary': 'Fale conosco',
+    'hero.meta.studio': 'Estúdio',
+    'hero.meta.based': 'Base',
+    'hero.meta.mail': 'E-mail',
+    'hero.meta.founder': 'Fundador',
+    'hero.based': 'Brasil · Remoto',
     'about.eyebrow': 'Quem somos',
     'about.title': 'DAFA Software, a marca por trás do código',
     'about.bio.1':
@@ -72,6 +77,9 @@ export const translations = {
     'theme.toggle.light': 'Ativar tema claro',
     'lang.toggle': 'Mudar para inglês (EN)',
     'footer.tagline': 'Produtos digitais com design moderno.',
+    'footer.cta': 'Vamos conversar?',
+    'footer.navigation': 'Navegação',
+    'footer.contact': 'Contato',
     'footer.rights': 'Todos os direitos reservados.',
   },
   en: {
@@ -87,6 +95,11 @@ export const translations = {
       'Web development studio building modern, fast and accessible websites, platforms and digital experiences — from concept to production.',
     'hero.cta.primary': 'View projects',
     'hero.cta.secondary': 'Get in touch',
+    'hero.meta.studio': 'Studio',
+    'hero.meta.based': 'Based in',
+    'hero.meta.mail': 'Email',
+    'hero.meta.founder': 'Founder',
+    'hero.based': 'Brazil · Remote',
     'about.eyebrow': 'Who we are',
     'about.title': 'DAFA Software, the name behind the code',
     'about.bio.1':
@@ -147,6 +160,9 @@ export const translations = {
     'theme.toggle.light': 'Enable light theme',
     'lang.toggle': 'Switch to Portuguese (BR)',
     'footer.tagline': 'Digital products with a modern design.',
+    'footer.cta': "Let's talk?",
+    'footer.navigation': 'Navigation',
+    'footer.contact': 'Contact',
     'footer.rights': 'All rights reserved.',
   },
 } as const
