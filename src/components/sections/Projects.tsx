@@ -101,12 +101,19 @@ export function Projects() {
                     <span className="text-base font-semibold text-foreground">
                       {project.name}
                     </span>
-                    <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-semibold text-primary">
-                      {t(
-                        project.category === 'institutional'
-                          ? 'projects.category.institutional'
-                          : 'projects.category.platform'
-                      )}
+                    <span className="flex items-center gap-1.5">
+                      {project.historical ? (
+                        <span className="rounded-full border border-border px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
+                          {t('projects.historical')}
+                        </span>
+                      ) : null}
+                      <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-semibold text-primary">
+                        {t(
+                          project.category === 'institutional'
+                            ? 'projects.category.institutional'
+                            : 'projects.category.platform'
+                        )}
+                      </span>
                     </span>
                   </span>
                   <span className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">

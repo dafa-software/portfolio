@@ -32,8 +32,12 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur">
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-        <a href="#home" className="text-lg font-bold tracking-tight text-foreground">
-          {site.name}
+        <a
+          href="#home"
+          className="flex items-center transition-opacity hover:opacity-80"
+          aria-label={site.name}
+        >
+          <img src="/logo.png" alt={site.name} className="h-9 w-auto" />
         </a>
 
         <div className="hidden items-center gap-8 md:flex">

@@ -25,6 +25,7 @@ export interface Project {
   summary: LocalizedText
   description: LocalizedText
   media: ProjectMedia[]
+  historical?: boolean
 }
 
 export const projects: Project[] = [
@@ -114,10 +115,11 @@ export const projects: Project[] = [
     },
     description: {
       'pt-BR':
-        'Plataforma marketplace para a compra e venda de recursos didáticos: autores publicam materiais e escolas e professores encontram conteúdo por série, tema e matéria. Atuação como CTO fractional na arquitetura do produto, nos fluxos de transação e na direção técnica da plataforma.',
-      en: 'Marketplace platform for buying and selling teaching resources: authors publish materials and schools and teachers find content by grade, topic and subject. Acted as fractional CTO on product architecture, transaction flows and technical direction.',
+        'Plataforma marketplace para a compra e venda de recursos didáticos: autores publicam materiais e escolas e professores encontram conteúdo por série, tema e matéria. Atuação como CTO fractional na arquitetura do produto, nos fluxos de transação e na direção técnica da plataforma. Projeto histórico: a plataforma não está mais em operação.',
+      en: 'Marketplace platform for buying and selling teaching resources: authors publish materials and schools and teachers find content by grade, topic and subject. Acted as fractional CTO on product architecture, transaction flows and technical direction. Historical project: the platform is no longer in operation.',
     },
     media: [],
+    historical: true,
   },
   {
     id: 'meucondo',

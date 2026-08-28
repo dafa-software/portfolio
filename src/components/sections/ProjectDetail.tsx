@@ -164,6 +164,11 @@ export function ProjectDetail({
         </h3>
 
         <div className="mt-3 flex flex-wrap gap-2">
+          {project.historical ? (
+            <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-muted-foreground">
+              {t('projects.historical')}
+            </span>
+          ) : null}
           <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
             {t(
               project.category === 'institutional'

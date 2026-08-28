@@ -21,8 +21,8 @@ export function About() {
           <div className="mt-14 grid items-center gap-12 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
             <div className="mx-auto w-56 md:w-full">
               <div className="flex aspect-square w-full flex-col items-center justify-center rounded-3xl border border-border bg-surface text-foreground">
-                <span className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary text-2xl font-bold text-primary-foreground">
-                  {site.name.charAt(0)}
+                <span className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary p-1.5">
+                  <img src="/logo.png" alt="" className="h-full w-full object-contain" />
                 </span>
                 <span className="mt-4 text-center text-sm font-semibold">
                   {site.name}
