@@ -101,6 +101,8 @@ const paths: Record<string, ReactNode> = {
       <polyline points="7 7 17 7 17 17" />
     </>
   ),
+  chevronLeft: <polyline points="15 18 9 12 15 6" />,
+  chevronRight: <polyline points="9 18 15 12 9 6" />,
   x: <path d="M18 6L6 18M6 6l12 12" />,
   menu: (
     <>

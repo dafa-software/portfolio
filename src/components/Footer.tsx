@@ -31,7 +31,7 @@ export function Footer() {
 
       <div className="border-t border-border">
         <p className="mx-auto max-w-6xl px-6 py-4 text-center text-xs text-muted-foreground md:text-left">
-          © {year} {site.fullName}. {t('footer.rights')}
+          © {year} {site.name}. {t('footer.rights')}
         </p>
       </div>
     </footer>

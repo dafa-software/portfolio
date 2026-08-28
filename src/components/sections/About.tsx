@@ -4,9 +4,9 @@ import { Reveal } from '../Reveal'
 import { SectionHeading } from '../SectionHeading'
 
 const stats = [
-  { key: 'about.stats.experience', value: '5+' },
-  { key: 'about.stats.projects', value: '30+' },
-  { key: 'about.stats.clients', value: '15+' },
+  { key: 'about.stats.experience', value: '12+' },
+  { key: 'about.stats.projects', value: '50+' },
+  { key: 'about.stats.clients', value: '20+' },
 ] as const
 
 export function About() {
@@ -24,10 +24,10 @@ export function About() {
                 <span className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary text-2xl font-bold text-primary-foreground">
                   {site.name.charAt(0)}
                 </span>
-                <span className="mt-4 text-sm font-semibold">{site.fullName}</span>
-                <span className="mt-1 text-xs text-muted-foreground">
-                  {site.role['pt-BR']}
+                <span className="mt-4 text-center text-sm font-semibold">
+                  {site.name}
                 </span>
+                <span className="mt-1 text-xs text-muted-foreground">{site.founder}</span>
               </div>
             </div>
 

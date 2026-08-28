@@ -21,7 +21,6 @@ export function Contact() {
   const { t } = useLanguage()
   const [form, setForm] = useState<FormState>(initialForm)
   const [errors, setErrors] = useState<Errors>({})
-  const [submitted, setSubmitted] = useState(false)
 
   const setField = (field: keyof FormState, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }))
@@ -45,7 +44,13 @@ export function Contact() {
 
     setErrors(nextErrors)
     if (Object.values(nextErrors).some(Boolean)) return
-    setSubmitted(true)
+
+    const subject = `${t('contact.form.subject')} — ${form.name.trim()}`
+    const body = `${form.message.trim()}\n\n${form.name.trim()} <${form.email.trim()}>`
+    window.location.href =
+      `mailto:${site.email}` +
+      `?subject=${encodeURIComponent(subject)}` +
+      `&body=${encodeURIComponent(body)}`
   }
 
   const fieldClass = (hasError: boolean) =>
@@ -110,112 +115,77 @@ export function Contact() {
           </div>
 
           <div className="rounded-2xl border border-border bg-surface p-6 md:p-8">
-            {submitted ? (
-              <div className="flex h-full flex-col items-center justify-center py-12 text-center">
-                <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="h-6 w-6"
-                    aria-hidden="true"
+            <form onSubmit={handleSubmit} noValidate className="space-y-5">
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <label
+                    htmlFor="contact-name"
+                    className="mb-1.5 block text-sm font-medium text-foreground"
                   >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                </span>
-                <h3 className="mt-4 text-xl font-bold text-foreground">
-                  {t('contact.success.title')}
-                </h3>
-                <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
-                  {t('contact.success.message')}
-                </p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setForm(initialForm)
-                    setSubmitted(false)
-                  }}
-                  className="mt-8 rounded-full border border-border bg-background px-6 py-2.5 text-sm font-semibold text-foreground transition-colors hover:border-primary/40 hover:text-primary"
-                >
-                  {t('contact.success.back')}
-                </button>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} noValidate className="space-y-5">
-                <div className="grid gap-5 sm:grid-cols-2">
-                  <div>
-                    <label
-                      htmlFor="contact-name"
-                      className="mb-1.5 block text-sm font-medium text-foreground"
-                    >
-                      {t('contact.form.name')}
-                    </label>
-                    <input
-                      id="contact-name"
-                      type="text"
-                      value={form.name}
-                      onChange={(event) => setField('name', event.target.value)}
-                      placeholder={t('contact.form.name.placeholder')}
-                      aria-invalid={Boolean(errors.name)}
-                      className={fieldClass(Boolean(errors.name))}
-                    />
-                    {errors.name ? (
-                      <p className="mt-1.5 text-xs text-red-400">{errors.name}</p>
-                    ) : null}
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="contact-email"
-                      className="mb-1.5 block text-sm font-medium text-foreground"
-                    >
-                      {t('contact.form.email')}
-                    </label>
-                    <input
-                      id="contact-email"
-                      type="email"
-                      value={form.email}
-                      onChange={(event) => setField('email', event.target.value)}
-                      placeholder={t('contact.form.email.placeholder')}
-                      aria-invalid={Boolean(errors.email)}
-                      className={fieldClass(Boolean(errors.email))}
-                    />
-                    {errors.email ? (
-                      <p className="mt-1.5 text-xs text-red-400">{errors.email}</p>
-                    ) : null}
-                  </div>
+                    {t('contact.form.name')}
+                  </label>
+                  <input
+                    id="contact-name"
+                    type="text"
+                    value={form.name}
+                    onChange={(event) => setField('name', event.target.value)}
+                    placeholder={t('contact.form.name.placeholder')}
+                    aria-invalid={Boolean(errors.name)}
+                    className={fieldClass(Boolean(errors.name))}
+                  />
+                  {errors.name ? (
+                    <p className="mt-1.5 text-xs text-red-400">{errors.name}</p>
+                  ) : null}
                 </div>
                 <div>
                   <label
-                    htmlFor="contact-message"
+                    htmlFor="contact-email"
                     className="mb-1.5 block text-sm font-medium text-foreground"
                   >
-                    {t('contact.form.message')}
+                    {t('contact.form.email')}
                   </label>
-                  <textarea
-                    id="contact-message"
-                    rows={5}
-                    value={form.message}
-                    onChange={(event) => setField('message', event.target.value)}
-                    placeholder={t('contact.form.message.placeholder')}
-                    aria-invalid={Boolean(errors.message)}
-                    className={`${fieldClass(Boolean(errors.message))} resize-none`}
+                  <input
+                    id="contact-email"
+                    type="email"
+                    value={form.email}
+                    onChange={(event) => setField('email', event.target.value)}
+                    placeholder={t('contact.form.email.placeholder')}
+                    aria-invalid={Boolean(errors.email)}
+                    className={fieldClass(Boolean(errors.email))}
                   />
-                  {errors.message ? (
-                    <p className="mt-1.5 text-xs text-red-400">{errors.message}</p>
+                  {errors.email ? (
+                    <p className="mt-1.5 text-xs text-red-400">{errors.email}</p>
                   ) : null}
                 </div>
-                <button
-                  type="submit"
-                  className="w-full rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover sm:w-auto"
+              </div>
+              <div>
+                <label
+                  htmlFor="contact-message"
+                  className="mb-1.5 block text-sm font-medium text-foreground"
                 >
-                  {t('contact.form.submit')}
-                </button>
-              </form>
-            )}
+                  {t('contact.form.message')}
+                </label>
+                <textarea
+                  id="contact-message"
+                  rows={5}
+                  value={form.message}
+                  onChange={(event) => setField('message', event.target.value)}
+                  placeholder={t('contact.form.message.placeholder')}
+                  aria-invalid={Boolean(errors.message)}
+                  className={`${fieldClass(Boolean(errors.message))} resize-none`}
+                />
+                {errors.message ? (
+                  <p className="mt-1.5 text-xs text-red-400">{errors.message}</p>
+                ) : null}
+              </div>
+              <button
+                type="submit"
+                className="w-full rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover sm:w-auto"
+              >
+                {t('contact.form.submit')}
+              </button>
+              <p className="text-xs text-muted-foreground">{t('contact.form.hint')}</p>
+            </form>
           </div>
         </div>
       </div>
