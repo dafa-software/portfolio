@@ -4,7 +4,7 @@ export function Hero() {
   const { t } = useLanguage()
 
   return (
-    <section id="about" className="relative overflow-hidden border-b border-border">
+    <section id="home" className="relative overflow-hidden border-b border-border">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 -top-32 mx-auto h-80 max-w-4xl bg-primary/10 blur-3xl"

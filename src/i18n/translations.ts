@@ -12,6 +12,23 @@ export const translations = {
       'Desenvolvedor full-stack que constrói sites, plataformas e experiências web modernas, rápidas e acessíveis — do conceito à produção.',
     'hero.cta.primary': 'Ver projetos',
     'hero.cta.secondary': 'Fale comigo',
+    'about.eyebrow': 'Sobre mim',
+    'about.title': 'Diálogo entre design e engenharia',
+    'about.bio.1':
+      'Sou desenvolvedor full-stack com foco em construir produtos web que unem estética e performance. Trabalho com marcas e plataformas de diferentes tamanhos, do site institucional ao SaaS.',
+    'about.bio.2':
+      'Gosto de começar pelo problema e não pela tecnologia: cada stack e cada detalhe de interface existe para resolver algo real — e para durar.',
+    'about.stats.experience': 'Anos de experiência',
+    'about.stats.projects': 'Projetos entregues',
+    'about.stats.clients': 'Clientes atendidos',
+    'services.eyebrow': 'Serviços',
+    'services.title': 'O que eu faço',
+    'services.intro':
+      'Soluções completas para a sua presença digital — do conceito ao código em produção.',
+    'advantages.eyebrow': 'Diferenciais',
+    'advantages.title': 'Por que trabalhar comigo',
+    'advantages.intro':
+      'Valores e práticas que fazem a diferença no dia a dia do projeto e depois dele.',
     'theme.toggle.dark': 'Ativar tema escuro',
     'theme.toggle.light': 'Ativar tema claro',
     'lang.toggle': 'Mudar para inglês (EN)',
@@ -31,6 +48,23 @@ export const translations = {
       'Full-stack developer building modern, fast and accessible websites, platforms and web experiences — from concept to production.',
     'hero.cta.primary': 'View projects',
     'hero.cta.secondary': 'Get in touch',
+    'about.eyebrow': 'About me',
+    'about.title': 'Where design meets engineering',
+    'about.bio.1':
+      "I'm a full-stack developer focused on building web products that pair aesthetics with performance. I work with brands and platforms of all sizes — from institutional websites to SaaS.",
+    'about.bio.2':
+      'I like to start from the problem, not the technology: every stack and interface detail exists to solve something real — and to last.',
+    'about.stats.experience': 'Years of experience',
+    'about.stats.projects': 'Projects delivered',
+    'about.stats.clients': 'Clients served',
+    'services.eyebrow': 'Services',
+    'services.title': 'What I do',
+    'services.intro':
+      'Complete solutions for your digital presence — from concept to production code.',
+    'advantages.eyebrow': 'Advantages',
+    'advantages.title': 'Why work with me',
+    'advantages.intro':
+      'Values and practices that make a difference during the project and beyond.',
     'theme.toggle.dark': 'Enable dark theme',
     'theme.toggle.light': 'Enable light theme',
     'lang.toggle': 'Switch to Portuguese (BR)',
