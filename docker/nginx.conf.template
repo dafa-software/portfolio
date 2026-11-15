@@ -1,0 +1,59 @@
+server {
+    listen       ${PORT};
+    server_name  _;
+    root         /usr/share/nginx/html;
+    index        index.html;
+
+    # Vite emits hashed asset filenames, so they can be cached forever.
+    location /assets/ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+        try_files $uri =404;
+    }
+
+    location = /healthz {
+        access_log off;
+        add_header Content-Type text/plain;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+        return 200 "ok\n";
+    }
+
+    # The HTML shell must never be cached, otherwise clients keep pointing at
+    # asset hashes from a previous deploy.
+    location = /index.html {
+        add_header Cache-Control "no-cache, must-revalidate";
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    }
+
+    # cleanUrls parity with vercel.json, plus SPA fallback.
+    location / {
+        try_files $uri $uri.html $uri/ /index.html;
+    }
+
+    # nginx only inherits server-level add_header into locations that declare
+    # none of their own, so every location above repeats these three.
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 256;
+    gzip_types
+        text/plain
+        text/css
+        text/javascript
+        application/javascript
+        application/json
+        image/svg+xml
+        font/woff2;
+
+    error_page 404 /index.html;
+}

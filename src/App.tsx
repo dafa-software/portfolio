@@ -1,11 +1,10 @@
 import { Footer } from './components/Footer'
 import { Navbar } from './components/Navbar'
 import { About } from './components/sections/About'
-import { Advantages } from './components/sections/Advantages'
 import { Contact } from './components/sections/Contact'
 import { Hero } from './components/sections/Hero'
+import { Process } from './components/sections/Process'
 import { Projects } from './components/sections/Projects'
-import { Services } from './components/sections/Services'
 
 function App() {
   return (
@@ -14,8 +13,7 @@ function App() {
       <main>
         <Hero />
         <About />
-        <Services />
-        <Advantages />
+        <Process />
         <Projects />
         <Contact />
       </main>

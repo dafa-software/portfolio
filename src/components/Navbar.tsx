@@ -1,21 +1,16 @@
 import { useEffect, useState } from 'react'
+import { navLinks, sectionIds } from '../data/nav'
 import { site } from '../data/site'
-import type { TranslationKey } from '../i18n/translations'
+import { useActiveSection } from '../hooks/useActiveSection'
 import { useLanguage } from '../i18n/useLanguage'
 import { Icon } from './Icon'
 import { LanguageToggle } from './LanguageToggle'
 import { ThemeToggle } from './ThemeToggle'
 
-const links: { key: TranslationKey; href: string; index: string }[] = [
-  { key: 'nav.about', href: '#about', index: '01' },
-  { key: 'nav.services', href: '#services', index: '02' },
-  { key: 'nav.projects', href: '#projects', index: '03' },
-  { key: 'nav.contact', href: '#contact', index: '04' },
-]
-
 export function Navbar() {
   const { t } = useLanguage()
   const [menuOpen, setMenuOpen] = useState(false)
+  const active = useActiveSection(sectionIds)
 
   useEffect(() => {
     if (!menuOpen) return
@@ -26,11 +21,15 @@ export function Navbar() {
     return () => document.removeEventListener('keydown', onKeyDown)
   }, [menuOpen])
 
-  const linkClasses =
-    'group inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground'
-
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur">
+      <a
+        href="#about"
+        className="btn btn-primary sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50"
+      >
+        {t('skip.content')}
+      </a>
+
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         <a
           href="#home"
@@ -41,12 +40,30 @@ export function Navbar() {
         </a>
 
         <div className="hidden items-center gap-8 lg:flex">
-          {links.map((link) => (
-            <a key={link.href} href={link.href} className={linkClasses}>
-              <span className="font-mono text-[11px] text-primary">{link.index}</span>
-              {t(link.key)}
-            </a>
-          ))}
+          {navLinks.map((link) => {
+            const isActive = active === link.id
+            return (
+              <a
+                key={link.id}
+                href={`#${link.id}`}
+                aria-current={isActive ? 'true' : undefined}
+                className={`group inline-flex items-center gap-2 text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'text-foreground'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <span
+                  className={`font-mono text-[11px] transition-colors ${
+                    isActive ? 'text-primary' : 'text-primary/60'
+                  }`}
+                >
+                  {link.index}
+                </span>
+                {t(link.key)}
+              </a>
+            )
+          })}
         </div>
 
         <div className="hidden items-center gap-3 lg:flex">
@@ -71,12 +88,15 @@ export function Navbar() {
       {menuOpen ? (
         <div className="border-t border-border bg-background px-6 py-5 lg:hidden">
           <div className="flex flex-col gap-4">
-            {links.map((link) => (
+            {navLinks.map((link) => (
               <a
-                key={link.href}
-                href={link.href}
+                key={link.id}
+                href={`#${link.id}`}
                 onClick={() => setMenuOpen(false)}
-                className="flex items-baseline gap-3 text-base font-medium text-foreground"
+                aria-current={active === link.id ? 'true' : undefined}
+                className={`flex items-baseline gap-3 text-base font-medium ${
+                  active === link.id ? 'text-primary' : 'text-foreground'
+                }`}
               >
                 <span className="font-mono text-xs text-primary">{link.index}</span>
                 {t(link.key)}

@@ -121,4 +121,89 @@
     opacity: 1;
     transform: none;
   }
+
+  .hero-grid {
+    background-image:
+      linear-gradient(to right, var(--border) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+    background-size: 4.5rem 4.5rem;
+    mask-image: radial-gradient(ellipse at 50% 35%, black, transparent 70%);
+    animation: grid-drift 32s linear infinite;
+  }
+
+  .rotate-word {
+    display: inline-block;
+    animation: rotate-in 0.5s ease both;
+  }
+
+  .cursor-glow {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .cursor-glow::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    background: radial-gradient(
+      22rem circle at var(--glow-x, 50%) var(--glow-y, 50%),
+      color-mix(in oklab, var(--primary) 16%, transparent),
+      transparent 70%
+    );
+  }
+
+  .cursor-glow:hover::before {
+    opacity: 1;
+  }
+
+  .sheet-in {
+    animation: sheet-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .fade-in {
+    animation: fade-in 0.35s ease both;
+  }
+}
+
+@keyframes grid-drift {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 4.5rem 4.5rem;
+  }
+}
+
+@keyframes rotate-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.4em) rotate(1.5deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+    transform: translateX(3rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
