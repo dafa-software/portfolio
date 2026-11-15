@@ -1,7 +1,19 @@
+import type { ReactNode } from 'react'
 import { useEffect, useRef, useState } from 'react'
+import { metricValue } from '../../data/projects'
 import type { Project } from '../../data/projects'
+import { sectorLabelKey } from '../../data/sectors'
 import { useLanguage } from '../../i18n/useLanguage'
 import { Icon } from '../Icon'
+
+function Field({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="border-t border-border py-5">
+      <p className="overline text-muted-foreground">{label}</p>
+      <div className="mt-2">{children}</div>
+    </div>
+  )
+}
 
 export function ProjectDetail({
   project,
@@ -17,10 +29,32 @@ export function ProjectDetail({
 
   useEffect(() => {
     const previouslyFocused = document.activeElement as HTMLElement | null
-    panelRef.current?.focus()
+    const panel = panelRef.current
+    panel?.focus()
+
+    const focusables = () =>
+      Array.from(
+        panel?.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), video[controls], [tabindex]:not([tabindex="-1"])'
+        ) ?? []
+      ).filter((node) => node.offsetParent !== null)
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onClose()
+      if (event.key === 'Tab') {
+        const nodes = focusables()
+        if (nodes.length === 0) return
+        const first = nodes[0]
+        const last = nodes[nodes.length - 1]
+        const active = document.activeElement
+        if (event.shiftKey && (active === first || active === panel)) {
+          event.preventDefault()
+          last.focus()
+        } else if (!event.shiftKey && active === last) {
+          event.preventDefault()
+          first.focus()
+        }
+      }
       if (hasMedia && event.key === 'ArrowLeft') {
         setCurrent((index) => (index === 0 ? project.media.length - 1 : index - 1))
       }
@@ -41,179 +75,228 @@ export function ProjectDetail({
   }, [onClose, hasMedia, project.media.length])
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      role="presentation"
-    >
-      <button
-        type="button"
-        aria-label={t('projects.close')}
+    <div className="fixed inset-0 z-50 flex justify-end" role="presentation">
+      {/* Dismiss surface only: the dialog's own close button is the
+          keyboard-reachable one, so this must not be a focus stop. */}
+      <div
+        aria-hidden="true"
         onClick={onClose}
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        className="fade-in absolute inset-0 bg-background/70 backdrop-blur-sm"
       />
+
       <div
         ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="project-detail-title"
         tabIndex={-1}
-        className="relative max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-border bg-background p-6 outline-none md:p-8"
+        className="sheet-in relative flex h-full w-full max-w-2xl flex-col overflow-y-auto border-l border-border bg-background outline-none"
       >
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label={t('projects.close')}
-          className="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-surface text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <Icon name="x" className="h-4 w-4" />
-        </button>
+        <header className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-border bg-background/90 px-6 py-4 backdrop-blur md:px-10">
+          <p className="overline truncate text-primary">
+            {t('projects.sheet')}
+            <span aria-hidden="true"> / </span>
+            {project.sectors.map((sector) => t(sectorLabelKey[sector])).join(' · ')}
+          </p>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label={t('projects.close')}
+            className="flex h-9 w-9 shrink-0 items-center justify-center border border-border text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground"
+          >
+            <Icon name="x" className="h-4 w-4" />
+          </button>
+        </header>
 
-        {hasMedia ? (
-          <div className="mt-2 overflow-hidden rounded-2xl border border-border bg-surface">
-            <div className="relative aspect-video">
-              {project.media.map((media, index) => (
-                <div
-                  key={media.id}
-                  className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${
-                    index === current ? 'opacity-100' : 'pointer-events-none opacity-0'
-                  }`}
-                  aria-hidden={index !== current}
-                >
-                  {media.type === 'video' ? (
-                    <video
-                      src={media.src}
-                      poster={media.poster}
-                      controls
-                      className="h-full w-full object-contain"
-                    />
-                  ) : (
-                    <img
-                      src={media.src}
-                      alt={media.alt?.[lang] ?? project.name}
-                      className="h-full w-full object-contain"
-                    />
-                  )}
+        <div className="px-6 pb-16 pt-8 md:px-10">
+          <h3
+            id="project-detail-title"
+            className="font-display text-3xl font-bold tracking-tight text-foreground md:text-5xl"
+          >
+            {project.name}
+          </h3>
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            {project.historical ? (
+              <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-muted-foreground">
+                {t('projects.historical')}
+              </span>
+            ) : null}
+            <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+              {t(
+                project.category === 'institutional'
+                  ? 'projects.category.institutional'
+                  : 'projects.category.platform'
+              )}
+            </span>
+            <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-muted-foreground">
+              {t(project.locale === 'br' ? 'projects.locale.br' : 'projects.locale.intl')}
+            </span>
+          </div>
+
+          {project.metrics.length > 0 ? (
+            <dl className="mt-8 grid divide-y divide-border border border-border sm:grid-flow-col sm:auto-cols-fr sm:divide-x sm:divide-y-0">
+              {project.metrics.map((metric) => (
+                <div key={metric.label.en} className="flex flex-col-reverse px-5 py-4">
+                  <dt className="mt-1 text-xs leading-snug text-muted-foreground">
+                    {metric.label[lang]}
+                  </dt>
+                  <dd className="font-display text-2xl font-bold tracking-tight text-primary">
+                    {metricValue(metric, lang)}
+                  </dd>
                 </div>
               ))}
+            </dl>
+          ) : null}
+
+          {hasMedia ? (
+            <figure className="mt-8 border border-border bg-surface">
+              <div className="relative aspect-video">
+                {project.media.map((media, index) => (
+                  <div
+                    key={media.id}
+                    className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${
+                      index === current ? 'opacity-100' : 'pointer-events-none opacity-0'
+                    }`}
+                    aria-hidden={index !== current}
+                  >
+                    {media.type === 'video' ? (
+                      <video
+                        src={media.src}
+                        poster={media.poster}
+                        controls
+                        tabIndex={index === current ? 0 : -1}
+                        className="h-full w-full object-contain"
+                      />
+                    ) : (
+                      <img
+                        src={media.src}
+                        alt={media.alt?.[lang] ?? project.name}
+                        className="h-full w-full object-contain"
+                      />
+                    )}
+                  </div>
+                ))}
+
+                {project.media.length > 1 ? (
+                  <>
+                    <button
+                      type="button"
+                      aria-label={t('projects.media.previous')}
+                      onClick={() =>
+                        setCurrent((index) =>
+                          index === 0 ? project.media.length - 1 : index - 1
+                        )
+                      }
+                      className="absolute left-0 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center border border-border bg-background/90 text-foreground transition-colors hover:border-primary/50"
+                    >
+                      <Icon name="chevronLeft" className="h-5 w-5" />
+                    </button>
+                    <button
+                      type="button"
+                      aria-label={t('projects.media.next')}
+                      onClick={() =>
+                        setCurrent((index) =>
+                          index === project.media.length - 1 ? 0 : index + 1
+                        )
+                      }
+                      className="absolute right-0 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center border border-border bg-background/90 text-foreground transition-colors hover:border-primary/50"
+                    >
+                      <Icon name="chevronRight" className="h-5 w-5" />
+                    </button>
+                  </>
+                ) : null}
+              </div>
 
               {project.media.length > 1 ? (
-                <>
-                  <button
-                    type="button"
-                    aria-label={t('projects.media.previous')}
-                    onClick={() =>
-                      setCurrent((index) =>
-                        index === 0 ? project.media.length - 1 : index - 1
-                      )
-                    }
-                    className="absolute left-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-background/80 text-foreground shadow-sm transition-colors hover:bg-background"
-                  >
-                    <Icon name="chevronLeft" className="h-5 w-5" />
-                  </button>
-                  <button
-                    type="button"
-                    aria-label={t('projects.media.next')}
-                    onClick={() =>
-                      setCurrent((index) =>
-                        index === project.media.length - 1 ? 0 : index + 1
-                      )
-                    }
-                    className="absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-background/80 text-foreground shadow-sm transition-colors hover:bg-background"
-                  >
-                    <Icon name="chevronRight" className="h-5 w-5" />
-                  </button>
-                </>
+                <figcaption className="flex items-center justify-between border-t border-border px-4 py-3">
+                  <div className="flex items-center gap-1.5">
+                    {project.media.map((media, index) => (
+                      <button
+                        key={media.id}
+                        type="button"
+                        aria-label={media.alt?.[lang] ?? `${index + 1}`}
+                        aria-current={index === current}
+                        onClick={() => setCurrent(index)}
+                        className={`h-1.5 transition-all ${
+                          index === current
+                            ? 'w-8 bg-primary'
+                            : 'w-4 bg-border hover:bg-muted-foreground'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <span className="font-mono text-xs text-muted-foreground">
+                    {String(current + 1).padStart(2, '0')} /{' '}
+                    {String(project.media.length).padStart(2, '0')}
+                  </span>
+                </figcaption>
               ) : null}
-            </div>
-
-            {project.media.length > 1 ? (
-              <div className="flex items-center justify-between border-t border-border px-4 py-2.5">
-                <div className="flex items-center gap-1.5">
-                  {project.media.map((media, index) => (
-                    <button
-                      key={media.id}
-                      type="button"
-                      aria-label={media.alt?.[lang] ?? `${index + 1}`}
-                      aria-current={index === current}
-                      onClick={() => setCurrent(index)}
-                      className={`h-2 rounded-full transition-all ${
-                        index === current
-                          ? 'w-5 bg-primary'
-                          : 'w-2 bg-border hover:bg-muted-foreground'
-                      }`}
-                    />
-                  ))}
-                </div>
-                <span className="text-xs font-medium text-muted-foreground">
-                  {current + 1} / {project.media.length}
-                </span>
-              </div>
-            ) : null}
-          </div>
-        ) : (
-          <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-xl font-bold text-primary-foreground">
-            {project.name.charAt(0)}
-          </span>
-        )}
-
-        <h3
-          id="project-detail-title"
-          className="mt-4 text-2xl font-bold tracking-tight text-foreground"
-        >
-          {project.name}
-        </h3>
-
-        <div className="mt-3 flex flex-wrap gap-2">
-          {project.historical ? (
-            <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-muted-foreground">
-              {t('projects.historical')}
-            </span>
+            </figure>
           ) : null}
-          <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-            {t(
-              project.category === 'institutional'
-                ? 'projects.category.institutional'
-                : 'projects.category.platform'
-            )}
-          </span>
-          <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-muted-foreground">
-            {t(project.locale === 'br' ? 'projects.locale.br' : 'projects.locale.intl')}
-          </span>
-        </div>
 
-        <dl className="mt-4">
-          <dt className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-            {t('projects.role')}
-          </dt>
-          <dd className="mt-1 text-sm font-medium text-foreground">
-            {project.role[lang]}
-          </dd>
-        </dl>
+          <div className="mt-10">
+            <Field label={t('projects.overview')}>
+              <p className="text-base leading-relaxed text-muted-foreground">
+                {project.description[lang]}
+              </p>
+            </Field>
 
-        <p className="mt-5 text-base leading-relaxed text-muted-foreground">
-          {project.description[lang]}
-        </p>
+            <Field label={t('projects.highlights')}>
+              <ul className="space-y-3">
+                {project.highlights.map((highlight) => (
+                  <li
+                    key={highlight.en}
+                    className="flex gap-3 text-base leading-relaxed text-muted-foreground"
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="mt-2.5 h-1.5 w-1.5 shrink-0 bg-primary"
+                    />
+                    {highlight[lang]}
+                  </li>
+                ))}
+              </ul>
+            </Field>
 
-        <ul className="mt-6 flex flex-wrap gap-2">
-          {project.techStack.map((tech) => (
-            <li
-              key={tech}
-              className="rounded-md border border-border bg-surface px-2.5 py-1 text-xs font-medium text-muted-foreground"
+            <Field label={t('projects.audience')}>
+              <p className="text-base leading-relaxed text-foreground">
+                {project.audience[lang]}
+              </p>
+            </Field>
+
+            <Field label={t('projects.role')}>
+              <p className="text-base font-medium text-foreground">
+                {project.role[lang]}
+              </p>
+            </Field>
+
+            <Field label={t('projects.stack')}>
+              <ul className="flex flex-wrap gap-2">
+                {project.techStack.map((tech) => (
+                  <li
+                    key={tech}
+                    className="border border-border bg-surface px-2.5 py-1 font-mono text-xs text-muted-foreground"
+                  >
+                    {tech}
+                  </li>
+                ))}
+              </ul>
+            </Field>
+          </div>
+
+          {project.url ? (
+            <a
+              href={project.url}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="btn btn-primary mt-10"
             >
-              {tech}
-            </li>
-          ))}
-        </ul>
-
-        <a
-          href={project.url}
-          target="_blank"
-          rel="noreferrer noopener"
-          className="mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover"
-        >
-          {t('projects.visit')}
-          <Icon name="arrowUpRight" className="h-4 w-4" />
-        </a>
+              {t('projects.visit')}
+              <Icon name="arrowUpRight" className="h-4 w-4" />
+            </a>
+          ) : null}
+        </div>
       </div>
     </div>
   )

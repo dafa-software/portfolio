@@ -40,19 +40,34 @@ src/
 ├── index.css           # Tailwind import + design tokens + reveal styles
 ├── i18n/               # translations + LanguageContext/LanguageProvider/useLanguage
 ├── theme/              # ThemeContext/ThemeProvider/useTheme
-├── data/               # projects.ts, services.ts, advantages.ts, site.ts
+├── data/               # projects.ts, sectors.ts, services.ts, advantages.ts, nav.ts, site.ts
+├── hooks/              # useActiveSection (scroll spy), useProjectHash (#projects/:id)
 └── components/
-    ├── Navbar, Footer, LanguageToggle, ThemeToggle, Icon, Reveal, SectionHeading
-    └── sections/       # Hero, About, Services, Advantages, Projects, ProjectDetail, Contact
+    ├── Navbar, Footer, LanguageToggle, ThemeToggle, Icon, Reveal, Section, SectionHeader
+    ├── features/       # process/ProcessTabs, projects/ProjectCard+ProjectFilters, contact/ContactProgress, home/FeaturedProjects, about/FounderPanel
+    └── sections/       # Hero, About, Process, Projects, ProjectDetail, Contact
 ```
 
 ## Product data — project media
 
-Each project in `src/data/projects.ts` has a `media` array (`image` | `gif` | `video`). The detail modal renders a carousel with arrows, dots, counter and keyboard navigation. Media files are pending — drop them into `public/` and fill `src` paths; empty arrays fall back to the monogram cover.
+Each project in `src/data/projects.ts` has a `media` array (`image` | `gif` | `video`). The detail modal renders a carousel with arrows, dots, counter and keyboard navigation. Media files are pending — drop them into `public/` and fill `src` paths; empty arrays simply omit the cover band (cards and the detail sheet are text-first).
+
+Each project also carries `sectors` (one or more ids from `src/data/sectors.ts`, first is primary), `audience`, `highlights`, `metrics` and an optional `featured` flag that puts it in the hero strip. `metrics` should only hold facts taken from the product's own public site or repository, and `url` is omitted for products that are no longer online.
 
 ## Deployment
 
 Static output in `dist/`. Any static host works; Vercel is the primary target.
+
+### Docker
+
+`Dockerfile` builds the site with Node and serves `dist/` through unprivileged nginx (`docker/nginx.conf.template`). The container listens on **5174**, the same port as `npm run dev` and `npm run preview`.
+
+```bash
+docker build -t dafa-portfolio .
+docker run --rm -p 5174:5174 dafa-portfolio
+```
+
+`PORT` is substituted into the nginx config at startup, so hosts that inject their own port (Cloud Run, for example) work without a rebuild: `docker run --rm -e PORT=3000 -p 3000:3000 dafa-portfolio`.
 
 ### Vercel
 

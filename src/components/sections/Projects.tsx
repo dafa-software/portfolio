@@ -1,161 +1,117 @@
 import { useMemo, useState } from 'react'
-import type { ProjectCategory, ProjectLocale } from '../../data/projects'
 import { projects } from '../../data/projects'
-import type { TranslationKey } from '../../i18n/translations'
+import { sectorOrder } from '../../data/sectors'
+import type { SectorId } from '../../data/sectors'
+import { useProjectHash } from '../../hooks/useProjectHash'
 import { useLanguage } from '../../i18n/useLanguage'
-import { Icon } from '../Icon'
 import { Reveal } from '../Reveal'
+import { Section } from '../Section'
 import { SectionHeader } from '../SectionHeader'
+import { ProjectCard } from '../features/projects/ProjectCard'
+import type {
+  CategoryFilter,
+  LocaleFilter,
+  SectorFilter,
+} from '../features/projects/ProjectFilters'
+import { ProjectFilters } from '../features/projects/ProjectFilters'
 import { ProjectDetail } from './ProjectDetail'
 
-type CategoryFilter = 'all' | ProjectCategory
-type LocaleFilter = 'all' | ProjectLocale
-
-const categoryFilters: { value: CategoryFilter; labelKey: TranslationKey }[] = [
-  { value: 'all', labelKey: 'projects.filter.all' },
-  { value: 'institutional', labelKey: 'projects.filter.institutional' },
-  { value: 'platform', labelKey: 'projects.filter.platform' },
-]
-
-const localeFilters: { value: LocaleFilter; labelKey: TranslationKey }[] = [
-  { value: 'all', labelKey: 'projects.filter.br' },
-  { value: 'intl', labelKey: 'projects.filter.intl' },
-]
+const isKnownId = (id: string) => projects.some((project) => project.id === id)
 
 export function Projects() {
-  const { lang, t } = useLanguage()
+  const { t } = useLanguage()
+  const [sector, setSector] = useState<SectorFilter>('all')
   const [category, setCategory] = useState<CategoryFilter>('all')
-  const [localeFilter, setLocaleFilter] = useState<LocaleFilter>('br')
-  const [selected, setSelected] = useState<string | null>(null)
+  const [locale, setLocale] = useState<LocaleFilter>('all')
+  const { openId, open, close } = useProjectHash(isKnownId)
 
   const filtered = useMemo(
     () =>
       projects.filter(
         (project) =>
+          (sector === 'all' || project.sectors.includes(sector)) &&
           (category === 'all' || project.category === category) &&
-          (localeFilter === 'all' || project.locale === localeFilter)
+          (locale === 'all' || project.locale === locale)
       ),
-    [category, localeFilter]
+    [sector, category, locale]
   )
 
-  const selectedProject = projects.find((project) => project.id === selected) ?? null
+  // Sector counts describe what each chip would show given the type and region
+  // filters, so a chip never promises results the grid cannot deliver.
+  const sectorCounts = useMemo(() => {
+    const scoped = projects.filter(
+      (project) =>
+        (category === 'all' || project.category === category) &&
+        (locale === 'all' || project.locale === locale)
+    )
+    return Object.fromEntries(
+      sectorOrder.map((id) => [id, scoped.filter((p) => p.sectors.includes(id)).length])
+    ) as Record<SectorId, number>
+  }, [category, locale])
+
+  const selectedProject = projects.find((project) => project.id === openId) ?? null
+
+  const clearFilters = () => {
+    setSector('all')
+    setCategory('all')
+    setLocale('all')
+  }
 
   return (
-    <section id="projects" className="border-b border-border bg-background">
-      <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
-        <SectionHeader
-          index="04"
-          overline={t('projects.eyebrow')}
-          title={t('projects.title')}
-          intro={t('projects.intro')}
-        />
+    <Section id="projects">
+      <SectionHeader
+        index="03"
+        overline={t('projects.eyebrow')}
+        title={t('projects.title')}
+        intro={t('projects.intro')}
+      />
 
-        <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3">
-          <div
-            role="group"
-            aria-label="category"
-            className="flex flex-wrap items-center gap-5"
-          >
-            {categoryFilters.map((option) => {
-              const isActive = category === option.value
-              return (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => setCategory(option.value)}
-                  aria-pressed={isActive}
-                  className={`overline pb-1 transition-colors ${
-                    isActive
-                      ? 'border-b-2 border-primary text-primary'
-                      : 'border-b-2 border-transparent text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  {t(option.labelKey)}
-                </button>
-              )
-            })}
-          </div>
-          <span aria-hidden="true" className="hidden h-4 w-px bg-border sm:block" />
-          <div
-            role="group"
-            aria-label="locale"
-            className="flex flex-wrap items-center gap-5"
-          >
-            {localeFilters.map((option) => {
-              const isActive = localeFilter === option.value
-              return (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => setLocaleFilter(option.value)}
-                  aria-pressed={isActive}
-                  className={`overline pb-1 transition-colors ${
-                    isActive
-                      ? 'border-b-2 border-primary text-primary'
-                      : 'border-b-2 border-transparent text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  {t(option.labelKey)}
-                </button>
-              )
-            })}
-          </div>
+      <div className="mt-12 grid gap-10 lg:grid-cols-12 lg:gap-12">
+        <div className="lg:col-span-3">
+          <ProjectFilters
+            sectorCounts={sectorCounts}
+            sector={sector}
+            category={category}
+            locale={locale}
+            onSectorChange={setSector}
+            onCategoryChange={setCategory}
+            onLocaleChange={setLocale}
+            count={filtered.length}
+          />
         </div>
 
-        <Reveal>
-          <ul className="mt-6">
-            {filtered.map((project, index) => (
-              <li key={project.id} className="border-t border-border">
-                <button
-                  type="button"
-                  onClick={() => setSelected(project.id)}
-                  aria-label={`${t('projects.details')}: ${project.name}`}
-                  className="group grid w-full gap-3 py-7 text-left transition-colors hover:bg-surface/70 md:grid-cols-12 md:items-baseline md:gap-4 md:py-9"
-                >
-                  <span className="font-mono text-sm text-primary md:col-span-1">
-                    {String(index + 1).padStart(2, '0')}
-                  </span>
-                  <span className="flex flex-col gap-1 md:col-span-4">
-                    <span className="font-display text-xl font-semibold tracking-tight text-foreground md:text-2xl">
-                      {project.name}
-                    </span>
-                    <span className="font-mono text-xs text-muted-foreground">
-                      {project.role[lang]}
-                    </span>
-                  </span>
-                  <span className="text-sm leading-relaxed text-muted-foreground md:col-span-5 md:text-base">
-                    {project.summary[lang]}
-                  </span>
-                  <span className="flex items-center justify-between gap-2 md:col-span-2 md:justify-end">
-                    <span className="flex flex-wrap items-center gap-1.5">
-                      {project.historical ? (
-                        <span className="rounded-full border border-border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-                          {t('projects.historical')}
-                        </span>
-                      ) : null}
-                      <span className="rounded-full border border-border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-                        {t(
-                          project.locale === 'br'
-                            ? 'projects.locale.br'
-                            : 'projects.locale.intl'
-                        )}
-                      </span>
-                    </span>
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border text-muted-foreground transition-all group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground">
-                      <Icon name="arrowUpRight" className="h-4 w-4" />
-                    </span>
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
-          <div aria-hidden="true" className="h-px w-full bg-border" />
-        </Reveal>
+        <div className="lg:col-span-9">
+          {filtered.length > 0 ? (
+            <ul className="grid gap-6 sm:grid-cols-2">
+              {filtered.map((project, index) => (
+                <Reveal as="li" key={project.id} delay={index * 70} className="h-full">
+                  <ProjectCard project={project} index={index} onOpen={open} />
+                </Reveal>
+              ))}
+            </ul>
+          ) : (
+            <div className="flex flex-col items-start border border-dashed border-border bg-surface/50 p-10">
+              <h3 className="font-display text-xl font-semibold tracking-tight text-foreground">
+                {t('projects.empty.title')}
+              </h3>
+              <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
+                {t('projects.empty.body')}
+              </p>
+              <button type="button" onClick={clearFilters} className="btn btn-ghost mt-6">
+                {t('projects.empty.action')}
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {selectedProject ? (
-        <ProjectDetail project={selectedProject} onClose={() => setSelected(null)} />
+        <ProjectDetail
+          key={selectedProject.id}
+          project={selectedProject}
+          onClose={close}
+        />
       ) : null}
-    </section>
+    </Section>
   )
 }
